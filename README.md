@@ -1,2 +1,2 @@
 # terraform-format-action
-GH Action to check terraform fmt, fix is needed and push commit
+GH Action to check terraform fmt, fix if needed and push commit
