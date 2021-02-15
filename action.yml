@@ -1,0 +1,43 @@
+name: Terraform Format
+description: Checks the terraform formatting, formats if broken and pushes the changes back to the branch. 
+runs:
+  using: "composite"
+  steps:
+    - name: Terraform Install
+      run: |
+        TERRAFORM_VERSION=`cat .terraform-version`
+        OS=linux
+        ARCH=amd64
+        zipFile="terraform_${TERRAFORM_VERSION}_${OS}_$ARCH.zip"
+        echo Installing terraform v$TERRAFORM_VERSION $zipFile
+        wget --no-verbose "https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/$zipFile"
+        unzip -o "$zipFile"
+        rm -f "$zipFile"
+        ./terraform version
+      shell: bash
+
+    - name: Terraform Format
+      shell: bash
+      run: |
+        echo Checking Terraform format
+        if terraform fmt -check -diff -recursive; then
+          echo "Terraform is properly formatted"
+          exit 0
+        fi
+        echo
+        echo "Running Terraform format"
+        terraform fmt -recursive
+
+    - name: Commit and push
+      shell: bash
+      run: |
+        if git diff-index --quiet HEAD --; then
+            echo No changes
+            exit 0
+        fi
+        # Use the current commits author
+        git config user.name "$(git log -1 --pretty=format:%an)"
+        git config user.email "$(git log -1 --pretty=format:%ae)"
+        git commit -a -m "AutoFix: Terraform format"
+        git show -s | cat
+        git push
