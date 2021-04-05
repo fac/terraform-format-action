@@ -1,5 +1,10 @@
 name: Terraform Format
 description: Checks the terraform formatting, formats if broken and pushes the changes back to the branch. 
+inputs:
+  fix-format:
+    description: "Auto fix broken formatting and push a commit"
+    default: false
+
 runs:
   using: "composite"
   steps:
@@ -16,21 +21,24 @@ runs:
         ./terraform version
       shell: bash
 
-    - name: Terraform Format
+    - name: Terraform Format Check
       shell: bash
+      env:
+        INPUT_FIX_FORMAT: ${{ inputs.fix-format }}
       run: |
         echo Checking Terraform format
         if terraform fmt -check -diff -recursive; then
           echo "Terraform is properly formatted"
           exit 0
         fi
-        echo
+        if [[ $INPUT_FIX_FORMAT != true ]]; then
+          echo Terraform format is broken, see diff for details
+          exit 10
+        fi
+
         echo "Running Terraform format"
         terraform fmt -recursive
 
-    - name: Commit and push
-      shell: bash
-      run: |
         if git diff-index --quiet HEAD --; then
             echo No changes
             exit 0
@@ -41,3 +49,6 @@ runs:
         git commit -a -m "AutoFix: Terraform format"
         git show -s | cat
         git push
+
+        # exit with error, so the fmt check for this commit fails
+        exit 10
