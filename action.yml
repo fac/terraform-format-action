@@ -32,7 +32,11 @@ runs:
           exit 0
         fi
         if [[ $INPUT_FIX_FORMAT != true ]]; then
-          echo Terraform format is broken, see diff for details
+          echo
+          echo Terraform format is broken, see diff for details. To fix, run:
+          echo
+          echo terraform fmt -recursive
+          echo
           exit 10
         fi
 
