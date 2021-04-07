@@ -27,7 +27,7 @@ runs:
         INPUT_FIX_FORMAT: ${{ inputs.fix-format }}
       run: |
         echo Checking Terraform format
-        if terraform fmt -check -diff -recursive; then
+        if ./terraform fmt -check -diff -recursive; then
           echo "Terraform is properly formatted"
           exit 0
         fi
@@ -41,7 +41,7 @@ runs:
         fi
 
         echo "Running Terraform format"
-        terraform fmt -recursive
+        ./terraform fmt -recursive
 
         if git diff-index --quiet HEAD --; then
             echo No changes
