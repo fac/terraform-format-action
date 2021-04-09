@@ -1,6 +1,9 @@
 name: Terraform Format
 description: Checks the terraform formatting, formats if broken and pushes the changes back to the branch. 
 inputs:
+  terraform-version:
+    description: "Install the version of terraform. By default (empty) use .terraform-version file"
+    default: ""
   fix-format:
     description: "Auto fix broken formatting and push a commit"
     default: false
@@ -8,9 +11,22 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Terraform Install
+    - name: Set TERRAFORM_VERSION
+      shell: bash
       run: |
-        TERRAFORM_VERSION=`cat .terraform-version`
+        if [[ -n "${{ inputs.terraform-version }}" ]]; then
+          echo "TERRAFORM_VERSION=${{ inputs.terraform-version }}" >> $GITHUB_ENV
+        else
+          if [[ ! -f .terraform-version ]]; then
+            echo "::error::No .terraform-version found and input terraform-version not set"
+            exit 10
+          fi
+          echo "TERRAFORM_VERSION=`cat .terraform-version`" >> $GITHUB_ENV
+        fi
+
+    - name: Terraform Install
+      shell: bash
+      run: |
         OS=linux
         ARCH=amd64
         zipFile="terraform_${TERRAFORM_VERSION}_${OS}_$ARCH.zip"
@@ -19,7 +35,6 @@ runs:
         unzip -o "$zipFile"
         rm -f "$zipFile"
         ./terraform version
-      shell: bash
 
     - name: Terraform Format Check
       shell: bash
@@ -33,9 +48,7 @@ runs:
         fi
         if [[ $INPUT_FIX_FORMAT != true ]]; then
           echo
-          echo Terraform format is broken, see diff for details. To fix, run:
-          echo
-          echo terraform fmt -recursive
+          echo ::error::Terraform format is broken, see diff for details. To fix, run: terraform fmt -recursive
           echo
           exit 10
         fi
