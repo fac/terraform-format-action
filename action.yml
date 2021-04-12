@@ -48,7 +48,7 @@ runs:
         fi
         if [[ $INPUT_FIX_FORMAT != true ]]; then
           echo
-          echo ::error::Terraform format is broken, see diff for details. To fix, run: terraform fmt -recursive
+          echo ::error::Terraform formatting errors detected. See log for diff with detail. To fix, run locally: terraform fmt -recursive
           echo
           exit 10
         fi
