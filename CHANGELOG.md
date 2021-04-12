@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [2.4.0] - 2021-04-12
+
+- Add new output `commit-id`, which is set to the ID of the autofix commit, if one was created.
+
 ## [2.3.0] - 2021-04-12
 
 - Fix: Error message looked like the action had broken when it had in fact detected fmt errors. Changed the error message to be less confusing.

@@ -13,6 +13,23 @@ those changes using the author of the triggering commit. Note that the pushed
 commit will **not** trigger a new run of this workflow (a protection in the
 actions system against loops).
 
+## Outputs
+
+### commit-id
+
+If you set the `fix-format` to `true`, this gets set to the ID of the commit it creates. You can test for this:
+```yaml
+  - name: Terraform Format Action
+    uses: fac/terraform-format-action@devp/v2
+    id: tf-fmt
+    with:
+      terraform-version: "0.12.30"
+      fix-format: true
+  - name: do something if we fixed formatting
+    if: steps.tf-fmt.outputs.commit-id
+    run: echo the autofix commit ID is ${{ steps.tf-fmt.outputs.commit-id}}
+```
+
 ## Inputs
 
 ### terraform-version
