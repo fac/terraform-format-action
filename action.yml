@@ -66,6 +66,3 @@ runs:
         git commit -a -m "AutoFix: Terraform format"
         git show -s | cat
         git push
-
-        # exit with error, so the fmt check for this commit fails
-        exit 10
