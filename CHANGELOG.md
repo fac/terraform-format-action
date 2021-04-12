@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [2.3.0] - 2021-04-12
+
+- Fix: Error message looked like the action had broken when it had in fact detected fmt errors. Changed the error message to be less confusing.
+
 ## [2.2.0] - 2021-04-09
 
 - Added: `terraform-version` input. Allows setting or forcing the version to install, ignoring the `.terraform-version` file.
