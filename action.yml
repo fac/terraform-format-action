@@ -7,6 +7,10 @@ inputs:
   fix-format:
     description: "Auto fix broken formatting and push a commit"
     default: false
+outputs:
+  commit-id:
+    description: "The ID of the commit created when fix-format is true"
+    value: ${{ steps.tf-fmt-check.outputs.commit-id }}
 
 runs:
   using: "composite"
@@ -37,6 +41,7 @@ runs:
         ./terraform version
 
     - name: Terraform Format Check
+      id: tf-fmt-check
       shell: bash
       env:
         INPUT_FIX_FORMAT: ${{ inputs.fix-format }}
@@ -66,3 +71,4 @@ runs:
         git commit -a -m "AutoFix: Terraform format"
         git show -s | cat
         git push
+        echo ::set-output name=commit-id::$(git rev-parse HEAD)
