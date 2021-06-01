@@ -1,3 +1,14 @@
+# RETIRED
+
+Use `reviewdog/action-suggester` instead:
+```
+      - name: suggester / terraform-format
+        uses: reviewdog/action-suggester@v1
+        with:
+          tool_name: terraform fmt
+          fail_on_error: true
+```
+
 # terraform-format-action
 
 GH Action to check terraform fmt, optionally fix and push commit.
