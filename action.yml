@@ -7,6 +7,9 @@ inputs:
   fix-format:
     description: "Auto fix broken formatting and push a commit"
     default: false
+  tick-autofix-commit:
+    description: "Add a successful check for the auto fix commit"
+    default: true
 outputs:
   commit-id:
     description: "The ID of the commit created when fix-format is true"
@@ -72,3 +75,15 @@ runs:
         git show -s | cat
         git push
         echo ::set-output name=commit-id::$(git rev-parse HEAD)
+      - name: Update check for new commit
+        if: steps.tf-fmt-check.outputs.commit-id && inputs.tick-autofix-commit
+        run: |
+          curl \
+            --silent \
+            --show-error \
+            --fail \
+            -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/check-runs \
+            -d '{ "name": "'${{ github.job }}'", "head_sha": "'${{ steps.tfFmt.outputs.commit-id }}'", "status": "completed", "conclusion": "success", "output": { "title": "Autofix check", "summary": "Created from https://github.com/'${{ github.repository }}'/actions/runs/'${{ github.run_id }}'" } }'

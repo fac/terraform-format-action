@@ -58,6 +58,12 @@ Set the version of terraform to install and check formatting for. Useful if ther
 
 Defaults to false, set to true to have the action push auto commits fixing formatting errors found.
 
+### tick-autofix-commit
+
+Add a check to the commit created when `fix-format` is true. Defaults to `true`. Use this when you're calling this action from a workflow that's used as a required check. Without it, the newly-created commit will not get a green check if the commit is made with the GitHub Action-supplied token (since those tokens never trigger workflow runs).
+
+Defaults to false, set to true to have the action push auto commits fixing formatting errors found.
+
 ## Usage
 
 As this action may modify the workspace when fixing formatting issues it is recommended that you run it as it's own workflow job. To check the format:

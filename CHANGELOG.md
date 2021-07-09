@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [2.%.0] - 2021-04-1#
+
+- Add new input `tick-autofix-commit`, to add a passing check to the autofix commit after it's pushed.
+
 ## [2.4.0] - 2021-04-12
 
 - Add new output `commit-id`, which is set to the ID of the autofix commit, if one was created.
